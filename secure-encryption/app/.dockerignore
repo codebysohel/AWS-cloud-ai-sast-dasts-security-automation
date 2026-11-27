@@ -1,0 +1,9 @@
+**
+!Dockerfile
+!requirements.lock
+!app.py
+!aws_ops.py
+!wsgi.py
+!index.html
+!styles.css
+!app.js

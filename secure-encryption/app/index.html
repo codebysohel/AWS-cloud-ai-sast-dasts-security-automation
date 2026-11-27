@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Secure S3 Encryptor</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">&#128274; Secure S3 Encryptor</div>
+    <div class="sub">Apply KMS encryption + policy to an S3 bucket, from your laptop</div>
+  </header>
+
+  <main class="container">
+    <p class="warn-banner">
+      &#9888; Runs locally only. Your AWS keys are sent to your own backend on
+      <code>localhost</code>, used in memory, and never stored or logged. Use a
+      least-privilege IAM user, not your root account.
+    </p>
+
+    <form id="mainForm" class="card" novalidate>
+      <h2>1. AWS Connection</h2>
+      <div class="grid">
+        <label>AWS Access Key ID
+          <input type="text" id="accessKeyId" autocomplete="off" placeholder="AKIA..." />
+          <span class="err" data-for="accessKeyId"></span>
+        </label>
+        <label>AWS Secret Access Key
+          <input type="password" id="secretAccessKey" autocomplete="off" placeholder="••••••••••••" />
+          <span class="err" data-for="secretAccessKey"></span>
+        </label>
+        <label>Default Region
+          <input type="text" id="region" list="regions" placeholder="ap-south-1" />
+          <datalist id="regions">
+            <option value="ap-south-1"><option value="us-east-1"><option value="us-west-2">
+            <option value="eu-west-1"><option value="eu-central-1"><option value="ap-southeast-1">
+          </datalist>
+          <span class="err" data-for="region"></span>
+        </label>
+      </div>
+      <button type="button" id="btnValidate" class="btn ghost">Validate connection</button>
+      <span id="identity" class="identity"></span>
+
+      <h2>2. IAM User &amp; Target</h2>
+      <div class="grid">
+        <label>IAM User identifier
+          <input type="text" id="iamUser" autocomplete="off" placeholder="secure-s3-app-user" />
+          <span class="err" data-for="iamUser"></span>
+        </label>
+        <label>Target S3 Bucket Name
+          <input type="text" id="bucketName" autocomplete="off" placeholder="my-existing-bucket" />
+          <span class="err" data-for="bucketName"></span>
+        </label>
+        <label>Existing KMS Key ARN <span class="opt">(optional - reuse on re-runs)</span>
+          <input type="text" id="existingKeyArn" autocomplete="off" placeholder="leave blank to create a new key" />
+        </label>
+      </div>
+      <label class="check">
+        <input type="checkbox" id="createUserIfMissing" /> Create the IAM user if it does not exist
+      </label>
+
+      <div class="actions">
+        <button type="submit" id="btnApply" class="btn primary">Apply encryption architecture</button>
+        <button type="button" id="btnVerify" class="btn ghost">Verify configuration</button>
+      </div>
+    </form>
+
+    <section id="results" class="card hidden">
+      <h2>Result</h2>
+      <div id="resultMsg" class="result-msg"></div>
+      <ul id="stepList" class="steps"></ul>
+      <div id="keyOut" class="keyout"></div>
+    </section>
+
+    <section class="card">
+      <h2>3. Data Encryption Demo (laptop &rarr; encrypted cloud)</h2>
+      <p class="muted">Pick a file on this machine. It is uploaded to the target bucket
+        forced to SSE-KMS, then the stored object's metadata is read back to prove it is
+        encrypted at rest.</p>
+      <div class="grid">
+        <label>File to upload
+          <input type="file" id="fileInput" />
+        </label>
+      </div>
+      <button type="button" id="btnUpload" class="btn primary">Encrypt &amp; upload</button>
+      <div id="uploadOut" class="keyout"></div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="app.js"></script>
+</body>
+</html>
